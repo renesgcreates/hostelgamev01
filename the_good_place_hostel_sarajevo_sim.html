@@ -1,0 +1,1871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Good Place Hostel — Ćemaluša 7, Sarajevo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --terracotta: #c85a32;
+            --terracotta-dark: #9e3f1d;
+            --copper: #b86b35;
+            --walnut: #3b2a21;
+            --cream: #fbf6ee;
+            --parchment: #f1e6d6;
+            --sage: #2e6f65;
+            --ink: #261b15;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #241a14;
+            color: var(--ink);
+            user-select: none;
+            overflow-x: hidden;
+        }
+        h1, h2, h3, .font-display {
+            font-family: 'Fraunces', serif;
+        }
+        .sarajevo-card {
+            background-color: var(--cream);
+            border: 3px solid var(--ink);
+            box-shadow: 4px 4px 0px var(--ink);
+            border-radius: 16px;
+        }
+        .sarajevo-btn {
+            border: 2.5px solid var(--ink);
+            box-shadow: 3px 3px 0px var(--ink);
+            transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.15s ease;
+            border-radius: 12px;
+            font-weight: 700;
+        }
+        .sarajevo-btn:hover:not(:disabled) {
+            transform: translate(-1px, -1px);
+            box-shadow: 4px 4px 0px var(--ink);
+        }
+        .sarajevo-btn:active:not(:disabled) {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px var(--ink);
+        }
+        .sarajevo-btn:disabled {
+            opacity: 0.48;
+            cursor: not-allowed;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            cursor: pointer;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(38, 27, 21, 0.08);
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(38, 27, 21, 0.3);
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col p-2 sm:p-3.5 gap-3">
+
+    <!-- TOP HUD BAR -->
+    <header class="sarajevo-card px-3 py-2.5 sm:px-5 flex flex-wrap items-center justify-between gap-2 z-10">
+        <!-- Brand & Sarajevo Address -->
+        <div class="flex items-center gap-2.5">
+            <div class="bg-[#c85a32] text-white px-3 py-1.5 rounded-xl border-2 border-[#261b15] font-display text-sm sm:text-base tracking-wide shadow-[2px_2px_0px_#261b15] flex items-center gap-1.5">
+                <span>🏡 The Good Place</span>
+                <span class="hidden xl:inline text-xs font-sans font-bold bg-[#261b15]/25 px-2 py-0.5 rounded-md">Ćemaluša 7, Sarajevo</span>
+            </div>
+            <div class="flex items-center gap-2 bg-[#f1e6d6] px-2.5 py-1 rounded-xl border-2 border-[#261b15]">
+                <span class="font-display text-sm sm:text-base text-[#261b15]" id="hud-day">Day 1</span>
+                <span class="text-[11px] font-extrabold px-2 py-0.5 rounded-full bg-[#2e6f65] text-white" id="hud-phase">Check-Out Window</span>
+            </div>
+            <!-- Time & Shift Clock -->
+            <div class="hidden md:flex flex-col w-32">
+                <div class="flex justify-between text-[11px] font-extrabold text-[#5a4538]">
+                    <span id="hud-clock">09:00</span>
+                    <span id="hud-window-tag" class="text-[#c85a32]">Out ≤11:00</span>
+                </div>
+                <div class="w-full h-2.5 bg-[#dfd0bc] rounded-full border border-[#261b15] overflow-hidden">
+                    <div id="hud-time-bar" class="h-full bg-[#b86b35] transition-all duration-200" style="width: 10%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Core Hostel Metrics -->
+        <div class="flex items-center gap-2 sm:gap-2.5 flex-wrap">
+            <div class="bg-[#e8f5e9] px-2.5 py-1 rounded-xl border-2 border-[#261b15] flex items-center gap-1.5" title="Cash Register (Bosnian Convertible Marks - BAM)">
+                <span class="text-sm">💵</span>
+                <span class="font-display text-sm sm:text-base text-[#1b5e20]" id="hud-cash">240.00 BAM</span>
+            </div>
+            <div class="bg-[#fff8e1] px-2.5 py-1 rounded-xl border-2 border-[#261b15] flex items-center gap-1.5" title="Hostelworld Rating (Target: 9.6+)">
+                <span class="text-sm">🏆</span>
+                <span class="font-display text-sm sm:text-base text-[#8f5e00]" id="hud-rating">9.5</span>
+                <span class="text-[10px] font-extrabold text-[#8f5e00]/80 hidden sm:inline">/10</span>
+            </div>
+            <div class="bg-[#e6f4f3] px-2.5 py-1 rounded-xl border-2 border-[#261b15] flex items-center gap-1.5" title="Occupied Bunks (Quince 4 + Apricot 6 + Grape 6)">
+                <span class="text-sm">🛏️</span>
+                <span class="font-display text-sm sm:text-base text-[#1d5955]" id="hud-occupancy">3/16</span>
+            </div>
+            <div class="bg-[#fef3c7] px-2.5 py-1 rounded-xl border-2 border-[#261b15] flex items-center gap-1.5" title="Balcony & Lounge Family Vibe">
+                <span class="text-sm">🥂</span>
+                <span class="font-display text-sm sm:text-base text-[#92400e]" id="hud-vibe">65</span>
+            </div>
+        </div>
+
+        <!-- Time & Audio Controls -->
+        <div class="flex items-center gap-1.5">
+            <button id="btn-pause" class="sarajevo-btn bg-[#f1e6d6] px-2.5 py-1 text-xs sm:text-sm" title="Pause">⏸️</button>
+            <button id="btn-1x" class="sarajevo-btn bg-[#2e6f65] text-white px-2.5 py-1 text-xs sm:text-sm" title="Normal Speed">1x</button>
+            <button id="btn-2x" class="sarajevo-btn bg-[#f1e6d6] px-2.5 py-1 text-xs sm:text-sm" title="Fast Speed">2x</button>
+            <button id="btn-mute" class="sarajevo-btn bg-[#f1e6d6] px-2.5 py-1 text-xs sm:text-sm" title="Toggle Sound">🔊</button>
+            <button id="btn-help" class="sarajevo-btn bg-[#e89f3c] text-[#261b15] px-2.5 py-1 text-xs sm:text-sm" title="House Guide">?</button>
+        </div>
+    </header>
+
+    <!-- MAIN WORKSPACE: FLOOR PLAN CANVAS + RECEPTION & HOSPITALITY DESK -->
+    <main class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-3 min-h-[560px]">
+
+        <!-- LEFT/CENTER: INTERACTIVE ĆEMALUŠA 7 FLOOR PLAN -->
+        <section class="lg:col-span-8 sarajevo-card p-2 flex flex-col relative min-h-[440px] sm:min-h-[540px]">
+            <div class="flex flex-wrap items-center justify-between px-2 pb-1.5 text-xs font-bold text-[#5a4538] gap-1">
+                <span>🗺️ Ćemaluša 7 Cutaway • Click guests to inspect • Click messy bunks/washrooms (🧹) or kettle (🫖)</span>
+                <span id="shift-banner-hint" class="text-[#2e6f65] font-extrabold">Check-in window: 12:00–21:00</span>
+            </div>
+            <div class="relative flex-1 w-full h-full rounded-xl overflow-hidden border-2 border-[#261b15] bg-[#3b2a21]">
+                <canvas id="hostelCanvas"></canvas>
+
+                <!-- Floating Toast Notification Feed -->
+                <div id="toast-container" class="absolute bottom-3 left-3 flex flex-col gap-1.5 pointer-events-none max-w-sm z-10"></div>
+
+                <!-- Sarajevo Random Event Popup -->
+                <div id="event-banner" class="hidden absolute top-3 left-1/2 -translate-x-1/2 w-[94%] max-w-md sarajevo-card bg-[#fffaf2] p-3 z-20 border-[#c85a32]">
+                    <div class="flex items-start gap-2.5">
+                        <div id="event-icon" class="text-2xl bg-[#ffedd5] p-2 rounded-xl border-2 border-[#261b15]">🥂</div>
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[11px] font-extrabold uppercase tracking-wider text-[#c85a32]">Sarajevo Moment</span>
+                                <span id="event-timer" class="text-xs font-bold text-[#5a4538]">18s</span>
+                            </div>
+                            <h4 id="event-title" class="font-display text-base text-[#261b15]">Balcony Rakija Toast</h4>
+                            <p id="event-desc" class="text-xs text-[#4a392e] mt-0.5 leading-snug">Guests gathered on the enclosed balcony overlooking Ćemaluša!</p>
+                            <div id="event-actions" class="flex flex-wrap gap-1.5 mt-2.5"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RIGHT PANEL: RECEPTION DESK, GUEST PASSPORT & IGOR'S HOSPITALITY -->
+        <aside class="lg:col-span-4 sarajevo-card p-3 flex flex-col gap-2.5 justify-between">
+
+            <!-- 1. Reception Queue -->
+            <div>
+                <div class="flex items-center justify-between mb-1.5">
+                    <h2 class="font-display text-base sm:text-lg text-[#261b15] flex items-center gap-1.5">
+                        🛎️ Ćemaluša 7 Desk <span id="queue-count" class="text-xs bg-[#c85a32] text-white px-2 py-0.5 rounded-full border border-[#261b15]">0</span>
+                    </h2>
+                    <span class="text-[11px] font-extrabold text-[#5a4538]">Cash Only (BAM)</span>
+                </div>
+                <div id="queue-list" class="flex gap-2 overflow-x-auto pb-1 min-h-[62px] items-center bg-[#f1e6d6] p-2 rounded-xl border-2 border-[#261b15]">
+                    <span class="text-xs text-[#6e5849] italic mx-auto">No travelers at the door right now...</span>
+                </div>
+            </div>
+
+            <!-- 2. Selected Traveler Passport & Room Assignment -->
+            <div id="passport-panel" class="flex-1 flex flex-col justify-between bg-[#fffdf9] rounded-xl border-2 border-[#261b15] p-3">
+                <div id="passport-empty" class="my-auto text-center py-4 px-2">
+                    <div class="text-3xl mb-1.5">🗺️</div>
+                    <h3 class="font-display text-base text-[#261b15]">"No Parents" Family Vibe</h3>
+                    <p class="text-xs text-[#5a4538] mt-1 leading-relaxed">
+                        Click an arriving backpacker to check their BAM cash, collect city tax, and match them to <strong>The Quince</strong>, <strong>The Apricot</strong>, or <strong>The Grape</strong>.
+                    </p>
+                </div>
+
+                <div id="passport-details" class="hidden flex-col gap-2 h-full justify-between">
+                    <div>
+                        <!-- Traveler Header -->
+                        <div class="flex items-center justify-between border-b-2 border-dashed border-[#d6c5ae] pb-2">
+                            <div class="flex items-center gap-2">
+                                <div id="guest-avatar" class="w-10 h-10 rounded-xl border-2 border-[#261b15] flex items-center justify-center text-xl shadow-[2px_2px_0px_#261b15]">🎒</div>
+                                <div>
+                                    <div class="flex items-center gap-1.5">
+                                        <h3 id="guest-name" class="font-display text-base text-[#261b15]">Elena Novak</h3>
+                                        <span id="guest-flag" class="text-sm">🇸🇮</span>
+                                    </div>
+                                    <p id="guest-origin" class="text-[11px] font-bold text-[#5a4538]">Ljubljana • 2 Nights</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div id="guest-cash-status" class="text-[11px] font-extrabold px-2 py-0.5 rounded-lg border border-[#261b15] bg-[#e8f5e9] text-[#1b5e20]">
+                                    💵 Has BAM Cash
+                                </div>
+                                <div class="text-[10px] font-bold text-[#5a4538] mt-0.5">+2.00 BAM/nt tax</div>
+                            </div>
+                        </div>
+
+                        <!-- Traits -->
+                        <div class="mt-2">
+                            <div id="guest-traits" class="flex flex-wrap gap-1"></div>
+                        </div>
+
+                        <!-- Traveler Quote -->
+                        <div class="mt-2 bg-[#f1e6d6] p-2 rounded-lg border border-[#261b15] text-xs italic text-[#3b2a21]" id="guest-quote">
+                            "Heard Igor's rakija welcome is legendary! Hoping for a bunk with a privacy curtain."
+                        </div>
+                    </div>
+
+                    <!-- Cash ATM Action (shown only if guest only has Euros/Card) -->
+                    <div id="atm-action-box" class="hidden mt-2 bg-[#fff7ed] p-2 rounded-xl border-2 border-[#c85a32]">
+                        <p class="text-[11px] font-bold text-[#9e3f1d] mb-1.5">
+                            ⚠️ Traveler only has Euros/Card! Send them 30m down Ćemaluša to the exchange/ATM first.
+                        </p>
+                        <button id="btn-send-atm" class="sarajevo-btn w-full bg-[#e89f3c] text-[#261b15] py-1.5 text-xs">
+                            🏧 Point to Ćemaluša Exchange / ATM
+                        </button>
+                    </div>
+
+                    <!-- Room Assignment Buttons -->
+                    <div id="room-assign-section" class="mt-2 pt-2 border-t-2 border-dashed border-[#d6c5ae]">
+                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#6e5849] block mb-1">Assign Dorm Bunk (All w/ Privacy Curtains):</span>
+                        <div id="room-assign-buttons" class="flex flex-col gap-1.5"></div>
+                        <button id="btn-turn-away" class="sarajevo-btn w-full mt-1.5 bg-[#fee2e2] hover:bg-[#fecaca] text-[#991b1b] py-1 text-[11px]">
+                            👋 Turn Away (Full / Outside Hours)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Igor's Sarajevo Hospitality & Upkeep Station -->
+            <div class="bg-[#f1e6d6] p-2.5 rounded-xl border-2 border-[#261b15] flex flex-col gap-2">
+                <div class="flex items-center justify-between text-xs font-extrabold">
+                    <span>🫖 Electric Kettle (Bosnian Coffee & Tea)</span>
+                    <span id="kettle-status-text" class="text-[#1b5e20]">100% Ready</span>
+                </div>
+                <div class="w-full h-2 bg-[#dfd0bc] rounded-full border border-[#261b15] overflow-hidden">
+                    <div id="kettle-bar-fill" class="h-full bg-[#b86b35] transition-all duration-300" style="width: 100%"></div>
+                </div>
+
+                <!-- Hospitality Action Grid -->
+                <div class="grid grid-cols-2 gap-1.5 mt-0.5">
+                    <button id="btn-brew-kettle" class="sarajevo-btn bg-[#b86b35] text-white py-1.5 px-2 text-[11px] flex items-center justify-center gap-1" title="Boil fresh water, Bosnian coffee & mountain tea">
+                        🫖 Brew Kettle (5 BAM)
+                    </button>
+                    <button id="btn-pour-rakija" class="sarajevo-btn bg-[#c85a32] text-white py-1.5 px-2 text-[11px] flex items-center justify-center gap-1" title="Pour welcome Rakija on the balcony! Boosts Vibe & Rating, raises noise">
+                        🥂 Rakija Toast (8 BAM)
+                    </button>
+                    <button id="btn-city-map" class="sarajevo-btn bg-[#2e6f65] text-white py-1.5 px-2 text-[11px] flex items-center justify-center gap-1" title="Hand out free Sarajevo maps & recommend Ćevapi, Tunnel of Hope, or Trebević Bobsleigh">
+                        🗺️ Map & Local Tips
+                    </button>
+                    <button id="btn-clean-all" class="sarajevo-btn bg-[#e89f3c] text-[#261b15] py-1.5 px-2 text-[11px] flex items-center justify-center gap-1" title="Scrub the 2 Toilets & 2 Showers and pull fresh privacy curtains on bunks">
+                        🧹 Scrub & Curtains
+                    </button>
+                </div>
+            </div>
+
+        </aside>
+    </main>
+
+    <!-- WELCOME / HOUSE GUIDE MODAL -->
+    <div id="modal-help" class="fixed inset-0 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+        <div class="sarajevo-card max-w-xl w-full p-5 sm:p-6 bg-[#fbf6ee] max-h-[92vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b-2 border-[#261b15] pb-3">
+                <div>
+                    <span class="text-[11px] font-extrabold uppercase tracking-wider text-[#c85a32]">Ćemaluša 7 • Sarajevo, BiH</span>
+                    <h2 class="font-display text-2xl text-[#261b15]">🏡 The Good Place Hostel</h2>
+                </div>
+                <span class="text-xs font-extrabold bg-[#2e6f65] text-white px-2.5 py-1 rounded-full border border-[#261b15]">Target: 🏆 9.6+</span>
+            </div>
+            <p class="text-xs sm:text-sm text-[#3b2a21] mt-3 leading-relaxed">
+                Welcome behind the reception desk at Sarajevo's coziest Austro-Hungarian apartment hostel! Run the shift as Igor & the volunteer crew—keeping our famous <strong>"No Parents" family vibe</strong> alive while protecting our 9.6+ Hostelworld score.
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-3.5 text-xs">
+                <div class="bg-[#f1e6d6] p-3 rounded-xl border-2 border-[#261b15]">
+                    <div class="font-display text-sm text-[#261b15] mb-1">1. 🛏️ Three Signature Dorms</div>
+                    <p class="text-[#4a392e]">
+                        <strong>The Quince (4-bed):</strong> Quietest, closest to showers.<br>
+                        <strong>The Apricot (6-bed):</strong> Social hub by the lounge.<br>
+                        <strong>The Grape (6-bed):</strong> Accessed <em>through</em> the enclosed balcony!
+                    </p>
+                </div>
+                <div class="bg-[#f1e6d6] p-3 rounded-xl border-2 border-[#261b15]">
+                    <div class="font-display text-sm text-[#261b15] mb-1">2. 💵 Cash BAM & City Tax</div>
+                    <p class="text-[#4a392e]">
+                        We are <strong>cash-only in Bosnian Marks (BAM)</strong> (+2 BAM/night city tax). If a guest only has Euros or card, send them right outside to the Ćemaluša exchange/ATM!
+                    </p>
+                </div>
+                <div class="bg-[#f1e6d6] p-3 rounded-xl border-2 border-[#261b15]">
+                    <div class="font-display text-sm text-[#261b15] mb-1">3. 🥂 Rakija, Kettle & Maps</div>
+                    <p class="text-[#4a392e]">
+                        Boil the electric kettle for Bosnian coffee/tea, hand out free city maps (Baščaršija ćevapi, Tunnel of Hope, Trebević bobsleigh), and pour <strong>Welcome Rakija</strong> (watch late-night noise!).
+                    </p>
+                </div>
+                <div class="bg-[#f1e6d6] p-3 rounded-xl border-2 border-[#261b15]">
+                    <div class="font-display text-sm text-[#261b15] mb-1">4. 🚿 2 Toilets & 2 Showers</div>
+                    <p class="text-[#4a392e]">
+                        Check-outs finish by <strong>11:00</strong>; regular check-ins run <strong>12:00–21:00</strong>. Keep the 2 showers, 2 toilets, and bunk privacy curtains spotless!
+                    </p>
+                </div>
+            </div>
+            <button id="btn-start-game" class="sarajevo-btn w-full mt-5 bg-[#c85a32] text-white py-3 font-display text-lg tracking-wide">
+                🛎️ Open Ćemaluša 7 Reception!
+            </button>
+        </div>
+    </div>
+
+    <!-- END OF DAY WRAP-UP MODAL -->
+    <div id="modal-summary" class="hidden fixed inset-0 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+        <div class="sarajevo-card max-w-md w-full p-5 sm:p-6 bg-[#fbf6ee]">
+            <div class="text-center border-b-2 border-dashed border-[#c8b59c] pb-3">
+                <span class="text-xs font-extrabold uppercase tracking-wider text-[#2e6f65]">Ćemaluša 7 Shift Complete</span>
+                <h2 id="summary-title" class="font-display text-2xl text-[#261b15] mt-0.5">Day 1 Ledger</h2>
+            </div>
+
+            <div class="mt-3.5 flex flex-col gap-2 text-xs sm:text-sm">
+                <div class="flex justify-between py-1 border-b border-[#e5d7c3]">
+                    <span class="text-[#5a4538] font-bold">🛏️ Dorm Bunks (Cash BAM)</span>
+                    <span id="sum-room-rev" class="font-extrabold text-[#1b5e20]">+0.00 BAM</span>
+                </div>
+                <div class="flex justify-between py-1 border-b border-[#e5d7c3]">
+                    <span class="text-[#5a4538] font-bold">🏛️ Sarajevo City Tax Collected</span>
+                    <span id="sum-tax-rev" class="font-extrabold text-[#1b5e20]">+0.00 BAM</span>
+                </div>
+                <div class="flex justify-between py-1 border-b border-[#e5d7c3]">
+                    <span class="text-[#5a4538] font-bold">🫖 Kettle Tips, Tours & Events</span>
+                    <span id="sum-bonus-rev" class="font-extrabold text-[#1b5e20]">+0.00 BAM</span>
+                </div>
+                <div class="flex justify-between py-1 border-b border-[#e5d7c3]">
+                    <span class="text-[#5a4538] font-bold">🧾 Apartment Utilities & Supplies</span>
+                    <span id="sum-expenses" class="font-extrabold text-[#991b1b]">-65.00 BAM</span>
+                </div>
+                <div class="flex justify-between py-2 px-3 bg-[#f1e6d6] rounded-xl border-2 border-[#261b15] mt-1">
+                    <span class="font-display text-base">Net Shift Cash</span>
+                    <span id="sum-net" class="font-display text-base text-[#1b5e20]">+0.00 BAM</span>
+                </div>
+            </div>
+
+            <div class="mt-3.5 bg-[#fff8e1] p-3 rounded-xl border-2 border-[#261b15] text-xs">
+                <div class="flex items-center justify-between font-extrabold text-[#8f5e00]">
+                    <span>Hostelworld Rating</span>
+                    <span id="sum-rating">🏆 9.6 / 10</span>
+                </div>
+                <p id="sum-review" class="italic text-[#4a392e] mt-1">
+                    "Igor welcomed us with rakija on the enclosed balcony overlooking Ćemaluša! Spotless showers and great privacy curtains."
+                </p>
+            </div>
+
+            <button id="btn-next-day" class="sarajevo-btn w-full mt-5 bg-[#2e6f65] text-white py-3 font-display text-lg">
+                ☀️ Start Morning Shift (09:00)
+            </button>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * ============================================================================
+         * THE GOOD PLACE HOSTEL — ĆEMALUŠA 7, SARAJEVO SIMULATION ENGINE
+         * ============================================================================
+         */
+
+        // ----------------------------------------------------------------------------
+        // 1. PROCEDURAL WEB AUDIO ENGINE (Bell ding, kettle whistle, rakija clink)
+        // ----------------------------------------------------------------------------
+        class SarajevoAudio {
+            constructor() {
+                this.ctx = null;
+                this.muted = false;
+            }
+            init() {
+                if (!this.ctx) {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioCtx();
+                }
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+            tone(freq, type, dur, vol = 0.11, delay = 0, slideTo = null) {
+                if (this.muted) return;
+                try {
+                    this.init();
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = type;
+                    const t0 = this.ctx.currentTime + delay;
+                    osc.frequency.setValueAtTime(freq, t0);
+                    if (slideTo) {
+                        osc.frequency.exponentialRampToValueAtTime(slideTo, t0 + dur);
+                    }
+                    gain.gain.setValueAtTime(vol, t0);
+                    gain.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(t0);
+                    osc.stop(t0 + dur);
+                } catch (e) {}
+            }
+            // Reception desk bell ding
+            bell() {
+                this.tone(1046.5, 'sine', 0.45, 0.14, 0);
+                this.tone(2093.0, 'triangle', 0.25, 0.06, 0);
+            }
+            // Cash register / BAM coins
+            bamCoin() {
+                this.tone(987.77, 'triangle', 0.1, 0.12, 0);
+                this.tone(1318.51, 'triangle', 0.24, 0.12, 0.06);
+            }
+            // Electric kettle boiling whistle
+            kettle() {
+                this.tone(780, 'sine', 0.35, 0.08, 0, 1180);
+                this.tone(1180, 'sine', 0.25, 0.07, 0.35, 1240);
+            }
+            // Rakija glasses clinking ("Živjeli!")
+            clink() {
+                this.tone(1760, 'sine', 0.18, 0.12, 0);
+                this.tone(2349, 'sine', 0.22, 0.10, 0.04);
+                this.tone(1975, 'sine', 0.25, 0.11, 0.11);
+            }
+            // Scrubbing / curtain swoosh
+            scrub() {
+                this.tone(310, 'triangle', 0.08, 0.09, 0);
+                this.tone(440, 'triangle', 0.1, 0.09, 0.06);
+            }
+            pop() {
+                this.tone(523.25, 'sine', 0.11, 0.11, 0);
+                this.tone(659.25, 'sine', 0.14, 0.11, 0.05);
+            }
+            warn() {
+                this.tone(240, 'sawtooth', 0.16, 0.07, 0);
+                this.tone(195, 'sawtooth', 0.2, 0.07, 0.08);
+            }
+        }
+        const sfx = new SarajevoAudio();
+
+        // ----------------------------------------------------------------------------
+        // 2. SARAJEVO TRAVELERS, TRAITS, LOCAL TIPS & RANDOM EVENTS
+        // ----------------------------------------------------------------------------
+        const TRAITS = {
+            'Quiet Seeker':   { icon: '🤫', bg: '#e0e7ff', fg: '#3730a3', desc: 'Loves The Quince (4-bed) & privacy curtains' },
+            'Social Butterfly':{ icon: '🥂', bg: '#ffedd5', fg: '#9a3412', desc: 'Thrives in The Apricot & balcony rakija nights' },
+            'Street Watcher': { icon: '🪟', bg: '#dcfce7', fg: '#166534', desc: 'Dreams of The Grape overlooking Ćemaluša street' },
+            'History Buff':   { icon: '🏛️', bg: '#fef3c7', fg: '#92400e', desc: 'Loves Free Walking Tour & Tunnel of Hope tips' },
+            'Hiker':          { icon: '🏔️', bg: '#e0f2fe', fg: '#075985', desc: 'Heading up Mount Trebević Olympic bobsleigh track' },
+            'Night Owl':      { icon: '🌙', bg: '#fce7f3', fg: '#9d174d', desc: 'Walks through the balcony late; can wake light sleepers' },
+            'Curtain Fan':    { icon: '🛌', bg: '#f3e8ff', fg: '#6b21a8', desc: 'Extra rating boost from clean bunk privacy curtains' }
+        };
+
+        const SARAJEVO_TIPS = [
+            { title: 'Baščaršija Ćevapi', msg: 'Sent guests to Ferhatović & Željo for warm somun & ćevapi!', bonus: 6, vibe: 6 },
+            { title: 'Trebević Bobsleigh Hike', msg: 'Mapped the trail up to the 1984 Olympic bobsleigh track!', bonus: 8, vibe: 8 },
+            { title: 'Sarajevo Walking Tour', msg: 'Signed travelers up for the free walking tour (Latin Bridge & Sebilj)!', bonus: 10, vibe: 7 },
+            { title: 'Tunnel of Hope Route', msg: 'Explained the tram & bus route to the Sarajevo War Tunnel museum.', bonus: 7, vibe: 5 },
+            { title: 'Yellow Fortress Sunset', msg: 'Recommended Žuta Tabija at sunset with Bosnian coffee!', bonus: 6, vibe: 9 }
+        ];
+
+        const GUEST_POOL = [
+            { name: 'Elena Novak', origin: 'Ljubljana', flag: '🇸🇮', avatar: '📸', traits: ['Street Watcher', 'Social Butterfly'], quote: '"Can I get a bed in The Grape? Watching Ćemaluša street from the balcony sounds magical!"' },
+            { name: 'Arthur Pendelton', origin: 'Bristol', flag: '🇬🇧', avatar: '📚', traits: ['Quiet Seeker', 'History Buff'], quote: '"Looking for a quiet 4-bed dorm with a reading lamp and curtain before tomorrow’s Tunnel tour."' },
+            { name: 'Clara Lindholm', origin: 'Gothenburg', flag: '🇸🇪', avatar: '🥾', traits: ['Hiker', 'Curtain Fan'], quote: '"Just hiked down from Trebević! Your bunk privacy curtains and power outlets are a lifesaver."' },
+            { name: 'Mateo & Lucia', origin: 'Madrid', flag: '🇪🇸', avatar: '🎸', traits: ['Social Butterfly', 'Night Owl'], quote: '"We heard this hostel has a family vibe and rakija on the balcony—where do we sign?!"' },
+            { name: 'Kenji Takahashi', origin: 'Kyoto', flag: '🇯🇵', avatar: '🗺️', traits: ['Quiet Seeker', 'Curtain Fan'], quote: '"The Quince next to the washrooms looks super cozy and peaceful."' },
+            { name: 'Freja Hansen', origin: 'Copenhagen', flag: '🇩🇰', avatar: '☕', traits: ['Social Butterfly', 'History Buff'], quote: '"First time in Bosnia! Point me toward the best ćevapi in Baščaršija."' },
+            { name: 'Lukas Horvat', origin: 'Zagreb', flag: '🇭🇷', avatar: '🎒', traits: ['Night Owl', 'Street Watcher'], quote: '"Walking through the enclosed balcony to reach The Grape dorm is such a cool layout."' },
+            { name: 'Nadia Benali', origin: 'Marseille', flag: '🇫🇷', avatar: '🎨', traits: ['History Buff', 'Curtain Fan'], quote: '"Love the Austro-Hungarian high ceilings! Let’s grab tea from the kettle."' },
+            { name: 'Samir Kovačević', origin: 'Vienna', flag: '🇦🇹', avatar: '🧭', traits: ['Hiker', 'Social Butterfly'], quote: '"Ready for board games in the lounge and a proper Bosnian coffee!"' },
+            { name: 'Hannah O’Brien', origin: 'Cork', flag: '🇮🇪', avatar: '🍀', traits: ['Quiet Seeker', 'Hiker'], quote: '"Early start for Mostar train tomorrow, so a quiet bunk in The Quince would be ideal."' }
+        ];
+
+        const SARAJEVO_EVENTS = [
+            {
+                icon: '🌙',
+                title: 'Late-Night Arrival Request (After 21:00)',
+                desc: 'A delayed bus from Belgrade just arrived! A tired backpacker rings the Ćemaluša 7 buzzer.',
+                choices: [
+                    { label: '🔑 Buzz In & Welcome (+32 BAM)', cash: 32, vibe: 10, rating: 0.04, msg: 'Welcomed late traveler with warm tea! +0.04 rating.' },
+                    { label: '😴 Quiet Hours Full', cash: 0, vibe: -2, rating: -0.02, msg: 'Kept dorms quiet for sleeping guests.' }
+                ]
+            },
+            {
+                icon: '🥂',
+                title: 'Spontaneous Balcony Rakija Night',
+                desc: 'Guests in The Apricot & The Grape are swapping stories on the enclosed balcony!',
+                choices: [
+                    { label: '🥃 Lead a "Živjeli!" Toast (-8 BAM)', cash: -8, vibe: 22, rating: 0.05, noise: 18, msg: 'Igor’s Sarajevo stories united the whole hostel! +22 Vibe!' },
+                    { label: '🫖 Serve Herbal Mountain Tea (-4 BAM)', cash: -4, vibe: 12, rating: 0.03, noise: 0, msg: 'Cozy tea chat with zero late-night noise!' }
+                ]
+            },
+            {
+                icon: '🎶',
+                title: 'Ćemaluša Pedestrian Street Festivities',
+                desc: 'Street musicians are playing sevdalinka right below the enclosed balcony!',
+                choices: [
+                    { label: '🪟 Crack Balcony Windows to Listen', cash: 0, vibe: 15, rating: 0.03, noise: 12, msg: 'Guests loved the live Sarajevo street music!' },
+                    { label: '🤫 Keep Balcony Shut for The Quince', cash: 0, vibe: 4, rating: 0.03, noise: -10, msg: 'Light sleepers in The Quince slept soundly.' }
+                ]
+            },
+            {
+                icon: '🚶',
+                title: 'Free Sarajevo Walking Tour Group',
+                desc: 'The local guide is gathering travelers outside Ćemaluša 7 in 10 minutes!',
+                choices: [
+                    { label: '📣 Rally Lounge Guests (+18 BAM tip)', cash: 18, vibe: 14, rating: 0.04, msg: '8 guests joined the walking tour! Great local tip.' },
+                    { label: '🗺️ Hand Out Self-Guided Maps', cash: 0, vibe: 7, rating: 0.02, msg: 'Guests headed toward Baščaršija with free maps.' }
+                ]
+            }
+        ];
+
+        // ----------------------------------------------------------------------------
+        // 3. AUTHENTIC ĆEMALUŠA 7 FLOOR PLAN & GAME STATE
+        // ----------------------------------------------------------------------------
+        const CITY_TAX_PER_NIGHT = 2.00; // 2.00 BAM per night
+
+        const state = {
+            day: 1,
+            timeMinutes: 9 * 60, // Starts at 09:00 (540 mins), ends at 23:30 (1410 mins)
+            speed: 1,
+            cash: 240.00,        // Bosnian Convertible Marks (BAM)
+            rating: 9.50,        // Hostelworld scale out of 10 (target 9.6+)
+            vibe: 65,
+            noiseLevel: 15,      // 0..100 (high noise after 22:00 hurts The Quince!)
+            kettleStock: 100,
+            selectedGuestId: null,
+            nextGuestId: 1,
+            spawnTimer: 4,
+            kettleDrinkTimer: 6,
+            eventTimer: 24,
+            activeEvent: null,
+            activeEventCountdown: 0,
+
+            dailyStats: {
+                roomRev: 0,
+                taxRev: 0,
+                bonusRev: 0,
+                expenses: 65,
+                ratingStart: 9.50
+            },
+
+            // Authentic Ćemaluša 7 Cutaway Rooms (Normalized 0..1 coordinates)
+            rooms: [
+                {
+                    id: 'street',
+                    name: 'Ćemaluša Pedestrian Street & ATM',
+                    shortName: 'Ćemaluša Street (ATM / Exchange)',
+                    type: 'street',
+                    rx: 0.02, ry: 0.84, rw: 0.96, rh: 0.14,
+                    color: '#6b5e54',
+                    accent: '#3b2a21',
+                    bunks: []
+                },
+                {
+                    id: 'reception',
+                    name: 'Reception & Luggage Drop',
+                    shortName: 'Reception • Ćemaluša 7',
+                    type: 'reception',
+                    rx: 0.02, ry: 0.45, rw: 0.27, rh: 0.36,
+                    color: '#f3e5d0',
+                    accent: '#c85a32',
+                    bunks: []
+                },
+                {
+                    id: 'quince',
+                    name: 'The Quince (Room 01 - 4-Bed)',
+                    shortName: '01 The Quince (4-Bed Quiet)',
+                    type: 'quince',
+                    rate: 30, // BAM/night
+                    rx: 0.02, ry: 0.03, rw: 0.27, rh: 0.39,
+                    color: '#fef3c7',
+                    accent: '#d97706',
+                    bunks: [
+                        { id: 'q1', label: 'Q1', ox: 0.25, oy: 0.32, guest: null, dirty: false, curtainFresh: true },
+                        { id: 'q2', label: 'Q2', ox: 0.75, oy: 0.32, guest: null, dirty: false, curtainFresh: true },
+                        { id: 'q3', label: 'Q3', ox: 0.25, oy: 0.74, guest: null, dirty: false, curtainFresh: true },
+                        { id: 'q4', label: 'Q4', ox: 0.75, oy: 0.74, guest: null, dirty: false, curtainFresh: true }
+                    ]
+                },
+                {
+                    id: 'washrooms',
+                    name: '2 Toilets & 2 Showers',
+                    shortName: '2 Toilets & 2 Showers',
+                    type: 'washrooms',
+                    rx: 0.31, ry: 0.03, rw: 0.17, rh: 0.39,
+                    color: '#dceef2',
+                    accent: '#0284c7',
+                    cleanliness: 96,
+                    bunks: []
+                },
+                {
+                    id: 'apricot',
+                    name: 'The Apricot (Room 02 - 6-Bed)',
+                    shortName: '02 The Apricot (6-Bed Social)',
+                    type: 'apricot',
+                    rate: 26, // BAM/night
+                    rx: 0.50, ry: 0.03, rw: 0.48, rh: 0.39,
+                    color: '#ffedd5',
+                    accent: '#ea580c',
+                    bunks: [
+                        { id: 'a1', label: 'A1', ox: 0.18, oy: 0.32, guest: null, dirty: false, curtainFresh: true },
+                        { id: 'a2', label: 'A2', ox: 0.50, oy: 0.32, guest: null, dirty: false, curtainFresh: true },
+                        { id: 'a3', label: 'A3', ox: 0.82, oy: 0.32, guest: null, dirty: false, curtainFresh: true },
+                        { id: 'a4', label: 'A4', ox: 0.18, oy: 0.74, guest: null, dirty: false, curtainFresh: true },
+                        { id: 'a5', label: 'A5', ox: 0.50, oy: 0.74, guest: null, dirty: false, curtainFresh: true },
+                        { id: 'a6', label: 'A6', ox: 0.82, oy: 0.74, guest: null, dirty: false, curtainFresh: true }
+                    ]
+                },
+                {
+                    id: 'balcony',
+                    name: 'Enclosed Balcony & Lounge',
+                    shortName: 'Enclosed Balcony & Lounge ("No Parents" Vibe)',
+                    type: 'balcony',
+                    rx: 0.31, ry: 0.45, rw: 0.36, rh: 0.36,
+                    color: '#f7ebd9',
+                    accent: '#2e6f65',
+                    bunks: []
+                },
+                {
+                    id: 'grape',
+                    name: 'The Grape (Room 03 - 6-Bed)',
+                    shortName: '03 The Grape (6-Bed via Balcony)',
+                    type: 'grape',
+                    rate: 28, // BAM/night
+                    rx: 0.69, ry: 0.45, rw: 0.29, rh: 0.36,
+                    color: '#f3e8ff',
+                    accent: '#7e3af2',
+                    bunks: [
+                        { id: 'g1', label: 'G1', ox: 0.22, oy: 0.32, guest: null, dirty: false, curtainFresh: true },
+                        { id: 'g2', label: 'G2', ox: 0.50, oy: 0.32, guest: null, dirty: false, curtainFresh: true },
+                        { id: 'g3', label: 'G3', ox: 0.78, oy: 0.32, guest: null, dirty: false, curtainFresh: true },
+                        { id: 'g4', label: 'G4', ox: 0.22, oy: 0.74, guest: null, dirty: false, curtainFresh: true },
+                        { id: 'g5', label: 'G5', ox: 0.50, oy: 0.74, guest: null, dirty: false, curtainFresh: true },
+                        { id: 'g6', label: 'G6', ox: 0.78, oy: 0.74, guest: null, dirty: false, curtainFresh: true }
+                    ]
+                }
+            ],
+
+            queue: [],
+            checkedIn: [],
+            particles: []
+        };
+
+        // ----------------------------------------------------------------------------
+        // 4. UI & HUD HELPERS
+        // ----------------------------------------------------------------------------
+        const canvas = document.getElementById('hostelCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function addToast(text, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const el = document.createElement('div');
+            const styles = {
+                info: 'bg-[#fbf6ee] text-[#261b15] border-[#261b15]',
+                good: 'bg-[#e8f5e9] text-[#1b5e20] border-[#1b5e20]',
+                warn: 'bg-[#fff7ed] text-[#9a3412] border-[#c85a32]',
+                bad:  'bg-[#fee2e2] text-[#991b1b] border-[#991b1b]'
+            };
+            el.className = `px-3 py-1.5 rounded-xl border-2 shadow-[2px_2px_0px_#261b15] text-xs font-extrabold transition-all duration-300 ${styles[type] || styles.info}`;
+            el.textContent = text;
+            container.appendChild(el);
+            if (container.children.length > 4) {
+                container.removeChild(container.firstChild);
+            }
+            setTimeout(() => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(6px)';
+                setTimeout(() => el.remove(), 300);
+            }, 3500);
+        }
+
+        function spawnParticle(normX, normY, text) {
+            state.particles.push({ x: normX, y: normY, vy: -0.045, alpha: 1, text });
+        }
+
+        function formatClock(mins) {
+            const h = Math.floor(mins / 60) % 24;
+            const m = Math.floor(mins % 60);
+            return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+        }
+
+        function getShiftPhase(mins) {
+            const h = Math.floor(mins / 60);
+            if (h < 11) return { label: 'Check-Out Window', tag: 'Out ≤11:00', color: '#b86b35', tint: 'rgba(255, 248, 225, 0.04)' };
+            if (h < 12) return { label: 'Turnover & Prep', tag: 'In at 12:00', color: '#2e6f65', tint: 'rgba(255, 255, 255, 0)' };
+            if (h < 21) return { label: 'Check-In Open', tag: 'In 12–21:00', color: '#c85a32', tint: h >= 18 ? 'rgba(200, 90, 50, 0.08)' : 'rgba(255, 255, 255, 0)' };
+            return { label: 'Balcony Evening', tag: 'Quiet 22:00', color: '#4338ca', tint: 'rgba(24, 22, 54, 0.24)' };
+        }
+
+        function updateHUD() {
+            document.getElementById('hud-day').textContent = `Day ${state.day}`;
+            const phase = getShiftPhase(state.timeMinutes);
+            const phaseEl = document.getElementById('hud-phase');
+            phaseEl.textContent = phase.label;
+            phaseEl.style.backgroundColor = phase.color;
+
+            document.getElementById('hud-clock').textContent = formatClock(state.timeMinutes);
+            document.getElementById('hud-window-tag').textContent = phase.tag;
+
+            const pct = Math.min(100, Math.max(0, ((state.timeMinutes - 540) / (1410 - 540)) * 100));
+            document.getElementById('hud-time-bar').style.width = `${pct}%`;
+
+            document.getElementById('hud-cash').textContent = `${state.cash.toFixed(2)} BAM`;
+            document.getElementById('hud-rating').textContent = state.rating.toFixed(2);
+
+            let totalBunks = 0;
+            let occupied = 0;
+            state.rooms.forEach(r => {
+                r.bunks.forEach(b => {
+                    totalBunks++;
+                    if (b.guest) occupied++;
+                });
+            });
+            document.getElementById('hud-occupancy').textContent = `${occupied}/${totalBunks}`;
+            document.getElementById('hud-vibe').textContent = Math.round(state.vibe);
+
+            const kPct = Math.round(state.kettleStock);
+            document.getElementById('kettle-status-text').textContent = kPct > 15 ? `${kPct}% Ready` : 'Refill Needed!';
+            document.getElementById('kettle-status-text').className = kPct > 25 ? 'text-[#1b5e20]' : 'text-[#991b1b]';
+            document.getElementById('kettle-bar-fill').style.width = `${kPct}%`;
+            document.getElementById('btn-brew-kettle').disabled = state.kettleStock >= 95 || state.cash < 5;
+            document.getElementById('btn-pour-rakija').disabled = state.cash < 8 || state.checkedIn.length === 0;
+        }
+
+        // ----------------------------------------------------------------------------
+        // 5. TRAVELER CREATION, ATM CASH CHECK & DORM MATCHING
+        // ----------------------------------------------------------------------------
+        function createTraveler(isPreCheckedIn = false) {
+            const tpl = GUEST_POOL[Math.floor(Math.random() * GUEST_POOL.length)];
+            const nights = Math.floor(Math.random() * 2) + 1;
+            const shirtPalette = ['#f87171', '#fb923c', '#facc15', '#4ade80', '#38bdf8', '#a78bfa', '#f472b6'];
+            const needsATM = !isPreCheckedIn && Math.random() < 0.32; // 32% arrive with only Euros/card
+
+            return {
+                id: state.nextGuestId++,
+                name: tpl.name,
+                origin: tpl.origin,
+                flag: tpl.flag,
+                avatar: tpl.avatar,
+                traits: [...tpl.traits],
+                quote: tpl.quote,
+                nightsLeft: nights,
+                patience: 100,
+                hasBAM: !needsATM,
+                atATM: false,
+                atmTimer: 0,
+                shirtColor: shirtPalette[Math.floor(Math.random() * shirtPalette.length)],
+                roomId: null,
+                bunkId: null,
+                x: 0.14,
+                y: 0.88,
+                targetX: 0.14,
+                targetY: 0.68,
+                waypoints: [],
+                activity: 'queue',
+                bubble: needsATM ? '💶?' : '🛎️'
+            };
+        }
+
+        // Route helper: The Grape MUST be entered through the Enclosed Balcony!
+        function setGuestDestination(guest, targetRoom, targetX, targetY) {
+            guest.waypoints = [];
+            if (targetRoom && targetRoom.id === 'grape') {
+                // Route through the balcony threshold first
+                guest.waypoints.push({ x: 0.56, y: 0.63 });
+                guest.waypoints.push({ x: 0.68, y: 0.63 });
+            } else if (guest.roomId === 'grape' && (!targetRoom || targetRoom.id !== 'grape')) {
+                // Leaving The Grape exits back through the balcony
+                guest.waypoints.push({ x: 0.68, y: 0.63 });
+                guest.waypoints.push({ x: 0.56, y: 0.63 });
+            }
+            guest.waypoints.push({ x: targetX, y: targetY });
+        }
+
+        function evaluateDormFit(guest, room) {
+            let score = 0;
+            let notes = [];
+            const has = (t) => guest.traits.includes(t);
+            const mates = room.bunks.filter(b => b.guest).map(b => b.guest);
+
+            if (room.type === 'quince') {
+                if (has('Quiet Seeker')) { score += 2; notes.push('+Quiet 4-bed'); }
+                if (has('Curtain Fan'))  { score += 1; notes.push('+Curtains & lamp'); }
+                if (has('Night Owl'))    { score -= 2; notes.push('!Too quiet for Night Owl'); }
+            }
+            if (room.type === 'apricot') {
+                if (has('Social Butterfly')) { score += 2; notes.push('+Social hub'); }
+                if (has('Hiker'))            { score += 1; notes.push('+Easy group plans'); }
+            }
+            if (room.type === 'grape') {
+                if (has('Street Watcher'))   { score += 3; notes.push('+Balcony street view'); }
+                if (has('Social Butterfly')) { score += 1; notes.push('+Balcony access'); }
+                if (has('Quiet Seeker'))     { score -= 1; notes.push('!Balcony foot traffic'); }
+            }
+
+            mates.forEach(m => {
+                if (has('Quiet Seeker') && m.traits.includes('Night Owl')) {
+                    score -= 2;
+                    notes.push('!Clashes w/ Night Owl');
+                }
+                if (has('Night Owl') && m.traits.includes('Quiet Seeker')) {
+                    score -= 2;
+                    notes.push('!Wakes Quiet Seeker');
+                }
+            });
+
+            return { score, notes };
+        }
+
+        function renderQueueUI() {
+            const list = document.getElementById('queue-list');
+            document.getElementById('queue-count').textContent = state.queue.length;
+            list.innerHTML = '';
+
+            if (state.queue.length === 0) {
+                list.innerHTML = `<span class="text-xs text-[#6e5849] italic mx-auto">No travelers waiting at Ćemaluša 7 right now...</span>`;
+                return;
+            }
+
+            state.queue.forEach(g => {
+                const isSelected = g.id === state.selectedGuestId;
+                const btn = document.createElement('button');
+                btn.className = `flex items-center gap-2 px-2.5 py-1.5 rounded-xl border-2 border-[#261b15] shrink-0 transition-all ${
+                    isSelected ? 'bg-[#c85a32] text-white shadow-[2px_2px_0px_#261b15] -translate-y-0.5' : 'bg-[#fbf6ee] text-[#261b15] hover:bg-[#fff3e0]'
+                }`;
+                const statusBadge = g.atATM ? '🏧 ATM' : (!g.hasBAM ? '💶 No BAM' : `${g.nightsLeft}nt`);
+                btn.innerHTML = `
+                    <span class="text-lg">${g.avatar}</span>
+                    <div class="text-left">
+                        <div class="text-xs font-extrabold leading-tight">${g.name.split(' ')[0]} ${g.flag}</div>
+                        <div class="text-[10px] font-bold opacity-90">${statusBadge}</div>
+                    </div>
+                `;
+                btn.onclick = () => selectGuest(g.id);
+                list.appendChild(btn);
+            });
+        }
+
+        function selectGuest(guestId) {
+            state.selectedGuestId = guestId;
+            sfx.pop();
+            renderQueueUI();
+            renderPassportUI();
+        }
+
+        function renderPassportUI() {
+            const emptyEl = document.getElementById('passport-empty');
+            const detailsEl = document.getElementById('passport-details');
+            const guest = state.queue.find(g => g.id === state.selectedGuestId);
+
+            if (!guest) {
+                emptyEl.classList.remove('hidden');
+                detailsEl.classList.add('hidden');
+                detailsEl.classList.remove('flex');
+                return;
+            }
+
+            emptyEl.classList.add('hidden');
+            detailsEl.classList.remove('hidden');
+            detailsEl.classList.add('flex');
+
+            document.getElementById('guest-avatar').textContent = guest.avatar;
+            document.getElementById('guest-avatar').style.backgroundColor = guest.shirtColor;
+            document.getElementById('guest-name').textContent = guest.name;
+            document.getElementById('guest-flag').textContent = guest.flag;
+            document.getElementById('guest-origin').textContent = `${guest.origin} • ${guest.nightsLeft} Night${guest.nightsLeft > 1 ? 's' : ''}`;
+            document.getElementById('guest-quote').textContent = guest.quote;
+
+            const cashEl = document.getElementById('guest-cash-status');
+            const atmBox = document.getElementById('atm-action-box');
+            const assignSec = document.getElementById('room-assign-section');
+
+            if (guest.atATM) {
+                cashEl.textContent = '🏧 At Ćemaluša ATM...';
+                cashEl.className = 'text-[11px] font-extrabold px-2 py-0.5 rounded-lg border border-[#261b15] bg-[#fef3c7] text-[#92400e]';
+                atmBox.classList.add('hidden');
+                assignSec.classList.add('opacity-50', 'pointer-events-none');
+            } else if (!guest.hasBAM) {
+                cashEl.textContent = '💶 Only Euros/Card';
+                cashEl.className = 'text-[11px] font-extrabold px-2 py-0.5 rounded-lg border border-[#261b15] bg-[#fee2e2] text-[#991b1b]';
+                atmBox.classList.remove('hidden');
+                assignSec.classList.add('opacity-45', 'pointer-events-none');
+            } else {
+                cashEl.textContent = '💵 BAM Cash Ready';
+                cashEl.className = 'text-[11px] font-extrabold px-2 py-0.5 rounded-lg border border-[#261b15] bg-[#e8f5e9] text-[#1b5e20]';
+                atmBox.classList.add('hidden');
+                assignSec.classList.remove('opacity-45', 'pointer-events-none');
+            }
+
+            // Render Trait Pills
+            const traitsEl = document.getElementById('guest-traits');
+            traitsEl.innerHTML = '';
+            guest.traits.forEach(t => {
+                const info = TRAITS[t];
+                const badge = document.createElement('span');
+                badge.className = 'text-[11px] font-extrabold px-2 py-0.5 rounded-lg border border-[#261b15] flex items-center gap-1';
+                badge.style.backgroundColor = info.bg;
+                badge.style.color = info.fg;
+                badge.title = info.desc;
+                badge.textContent = `${info.icon} ${t}`;
+                traitsEl.appendChild(badge);
+            });
+
+            // Render Dorm Assignment Buttons
+            const btnsEl = document.getElementById('room-assign-buttons');
+            btnsEl.innerHTML = '';
+            const dorms = state.rooms.filter(r => r.bunks.length > 0);
+            const hour = Math.floor(state.timeMinutes / 60);
+            const isEarly = hour < 12;
+
+            dorms.forEach(room => {
+                const openBunks = room.bunks.filter(b => !b.guest && !b.dirty);
+                const dirtyBunks = room.bunks.filter(b => !b.guest && b.dirty);
+                const fit = evaluateDormFit(guest, room);
+                const totalCollect = (room.rate + CITY_TAX_PER_NIGHT) * guest.nightsLeft;
+
+                let badge = '';
+                if (fit.score >= 2) badge = `<span class="text-[10px] bg-[#dcfce7] text-[#166534] px-1.5 py-0.2 rounded border border-[#166534]">★ Best Fit</span>`;
+                else if (fit.score < 0) badge = `<span class="text-[10px] bg-[#fee2e2] text-[#991b1b] px-1.5 py-0.2 rounded border border-[#991b1b]">⚠ Clash</span>`;
+
+                const btn = document.createElement('button');
+                btn.className = 'sarajevo-btn w-full px-2.5 py-1.5 bg-[#fbf6ee] hover:bg-[#e6f4f3] text-left flex items-center justify-between text-xs';
+                btn.disabled = openBunks.length === 0 || !guest.hasBAM || guest.atATM;
+
+                let sub = `${openBunks.length} open`;
+                if (openBunks.length === 0 && dirtyBunks.length > 0) sub = `Needs cleaning (${dirtyBunks.length})`;
+                else if (openBunks.length === 0) sub = 'Full';
+                else if (isEarly) sub += ' • Early bag drop';
+                else if (fit.notes.length) sub += ` • ${fit.notes[0]}`;
+
+                btn.innerHTML = `
+                    <div>
+                        <div class="font-extrabold text-[#261b15] flex items-center gap-1.5">
+                            <span>${room.shortName}</span>
+                            ${badge}
+                        </div>
+                        <div class="text-[10px] text-[#5a4538]">${sub}</div>
+                    </div>
+                    <div class="text-right">
+                        <span class="font-display text-xs sm:text-sm text-[#1b5e20]">+${totalCollect.toFixed(0)} BAM</span>
+                        <div class="text-[9px] text-[#5a4538]">incl. tax</div>
+                    </div>
+                `;
+                btn.onclick = () => checkInTraveler(guest.id, room.id);
+                btnsEl.appendChild(btn);
+            });
+        }
+
+        function sendGuestToATM(guestId) {
+            const guest = state.queue.find(g => g.id === guestId);
+            if (!guest || guest.hasBAM || guest.atATM) return;
+            guest.atATM = true;
+            guest.atmTimer = 5.5;
+            guest.bubble = '🏧';
+            // Walk out onto Ćemaluša pedestrian street
+            guest.waypoints = [{ x: 0.14, y: 0.90 }, { x: 0.48, y: 0.91 }];
+            sfx.pop();
+            addToast(`🏧 ${guest.name} stepped onto Ćemaluša street to get BAM cash.`, 'info');
+            renderQueueUI();
+            renderPassportUI();
+        }
+
+        function checkInTraveler(guestId, roomId) {
+            const qIndex = state.queue.findIndex(g => g.id === guestId);
+            if (qIndex === -1) return;
+            const guest = state.queue[qIndex];
+            if (!guest.hasBAM) return;
+
+            const room = state.rooms.find(r => r.id === roomId);
+            const openBunk = room.bunks.find(b => !b.guest && !b.dirty);
+            if (!openBunk) return;
+
+            const fit = evaluateDormFit(guest, room);
+            const roomTotal = room.rate * guest.nightsLeft;
+            const taxTotal = CITY_TAX_PER_NIGHT * guest.nightsLeft;
+
+            state.queue.splice(qIndex, 1);
+            openBunk.guest = guest;
+            guest.roomId = room.id;
+            guest.bunkId = openBunk.id;
+
+            // Collect cash BAM + City Tax
+            state.cash += (roomTotal + taxTotal);
+            state.dailyStats.roomRev += roomTotal;
+            state.dailyStats.taxRev += taxTotal;
+
+            // Rating & Vibe adjustments (Privacy curtains give a built-in sleep quality bonus!)
+            const curtainBonus = openBunk.curtainFresh ? 0.02 : 0;
+            if (fit.score >= 2) {
+                state.rating = Math.min(10.0, state.rating + 0.05 + curtainBonus);
+                state.vibe += 8;
+                addToast(`✨ Perfect match in ${room.name.split(' (')[0]}! +${(roomTotal + taxTotal).toFixed(0)} BAM`, 'good');
+            } else if (fit.score < 0) {
+                state.rating = Math.max(7.0, state.rating - 0.08);
+                addToast(`😬 Roommate mismatch in ${room.name.split(' (')[0]}! Rating dipped.`, 'warn');
+            } else {
+                state.rating = Math.min(10.0, state.rating + curtainBonus);
+                addToast(`🛎️ Checked in ${guest.name} (+${roomTotal} BAM + ${taxTotal} BAM tax)`, 'info');
+            }
+
+            // Route guest into the apartment (if The Grape, walks through Enclosed Balcony!)
+            const hour = Math.floor(state.timeMinutes / 60);
+            if (hour >= 21) {
+                guest.activity = 'sleep';
+                setGuestDestination(guest, room, room.rx + room.rw * openBunk.ox, room.ry + room.rh * openBunk.oy);
+                guest.bubble = '💤';
+            } else {
+                guest.activity = 'balcony';
+                // Walk to bunk briefly or straight to balcony lounge
+                if (room.id === 'grape') {
+                    setGuestDestination(guest, room, room.rx + room.rw * openBunk.ox, room.ry + room.rh * openBunk.oy);
+                } else {
+                    setGuestDestination(guest, null, 0.40 + Math.random() * 0.20, 0.56 + Math.random() * 0.18);
+                }
+                guest.bubble = '🫖';
+            }
+
+            state.checkedIn.push(guest);
+            sfx.bamCoin();
+            spawnParticle(room.rx + room.rw * openBunk.ox, room.ry + room.rh * openBunk.oy, `+${(roomTotal + taxTotal).toFixed(0)} BAM`);
+
+            state.selectedGuestId = state.queue.length > 0 ? state.queue[0].id : null;
+            renderQueueUI();
+            renderPassportUI();
+            updateHUD();
+        }
+
+        function turnAwayGuest(guestId) {
+            const qIndex = state.queue.findIndex(g => g.id === guestId);
+            if (qIndex === -1) return;
+            const guest = state.queue.splice(qIndex, 1)[0];
+            sfx.warn();
+            addToast(`👋 Turned away ${guest.name} at Ćemaluša 7.`, 'info');
+            state.selectedGuestId = state.queue.length > 0 ? state.queue[0].id : null;
+            renderQueueUI();
+            renderPassportUI();
+        }
+
+        // ----------------------------------------------------------------------------
+        // 6. IGOR'S HOSPITALITY ACTIONS & MAINTENANCE
+        // ----------------------------------------------------------------------------
+        function brewKettle() {
+            if (state.cash < 5 || state.kettleStock >= 95) return;
+            state.cash -= 5;
+            state.kettleStock = 100;
+            sfx.kettle();
+            spawnParticle(0.45, 0.52, '🫖 Bosnian Coffee!');
+            addToast('🫖 Boiled fresh electric kettle: Bosnian coffee & mountain tea ready! (-5 BAM)', 'good');
+            updateHUD();
+        }
+
+        function pourWelcomeRakija() {
+            if (state.cash < 8 || state.checkedIn.length === 0) return;
+            state.cash -= 8;
+            state.vibe += 14;
+            state.noiseLevel = Math.min(100, state.noiseLevel + 16);
+            state.rating = Math.min(10.0, state.rating + 0.04);
+            sfx.clink();
+
+            // Gather lounge guests around the balcony rakija table
+            state.checkedIn.forEach(g => {
+                if (g.activity !== 'sleep') {
+                    g.activity = 'balcony';
+                    setGuestDestination(g, null, 0.37 + Math.random() * 0.24, 0.56 + Math.random() * 0.18);
+                    g.bubble = '🥂';
+                }
+            });
+
+            spawnParticle(0.48, 0.62, '🥂 Živjeli!');
+            addToast('🥂 Poured Welcome Rakija on the balcony! +14 Vibe & Sarajevo stories (-8 BAM)', 'good');
+            updateHUD();
+        }
+
+        function handOutCityMaps() {
+            const tip = SARAJEVO_TIPS[Math.floor(Math.random() * SARAJEVO_TIPS.length)];
+            state.vibe += tip.vibe;
+            state.cash += tip.bonus;
+            state.dailyStats.bonusRev += tip.bonus;
+            state.rating = Math.min(10.0, state.rating + 0.02);
+            sfx.pop();
+            spawnParticle(0.16, 0.58, `🗺️ +${tip.bonus} BAM`);
+            addToast(`🗺️ ${tip.title}: ${tip.msg} (+${tip.bonus} BAM)`, 'good');
+            updateHUD();
+        }
+
+        function cleanBunk(room, bunk) {
+            if (!bunk.dirty && bunk.curtainFresh) return;
+            bunk.dirty = false;
+            bunk.curtainFresh = true;
+            sfx.scrub();
+            spawnParticle(room.rx + room.rw * bunk.ox, room.ry + room.rh * bunk.oy, '✨ Fresh Curtain');
+            addToast(`🧹 Made bunk & hung fresh privacy curtain in ${room.name.split(' (')[0]}!`, 'good');
+            renderPassportUI();
+        }
+
+        function scrubWashrooms() {
+            const wash = state.rooms.find(r => r.id === 'washrooms');
+            if (wash.cleanliness >= 98) return;
+            wash.cleanliness = 100;
+            sfx.scrub();
+            spawnParticle(wash.rx + wash.rw * 0.5, wash.ry + wash.rh * 0.5, '🚿 Spotless!');
+            addToast('🚿 Scrubbed both toilets & both showers! Rating protected.', 'good');
+        }
+
+        function scrubAllAndCurtains() {
+            let didWork = false;
+            state.rooms.forEach(r => {
+                r.bunks.forEach(b => {
+                    if (b.dirty || !b.curtainFresh) {
+                        b.dirty = false;
+                        b.curtainFresh = true;
+                        didWork = true;
+                        spawnParticle(r.rx + r.rw * b.ox, r.ry + r.rh * b.oy, '✨');
+                    }
+                });
+            });
+            const wash = state.rooms.find(r => r.id === 'washrooms');
+            if (wash.cleanliness < 96) {
+                wash.cleanliness = 100;
+                didWork = true;
+                spawnParticle(wash.rx + wash.rw * 0.5, wash.ry + wash.rh * 0.5, '🫧');
+            }
+            if (didWork) {
+                sfx.scrub();
+                addToast('🧹 Scrubbed the 2 toilets, 2 showers & refreshed all bunk curtains!', 'good');
+                renderPassportUI();
+            } else {
+                addToast('✨ All 16 bunks, curtains & 4 washroom stalls are already spotless!', 'info');
+            }
+        }
+
+        // ----------------------------------------------------------------------------
+        // 7. SARAJEVO RANDOM EVENTS & END-OF-DAY SHIFT LEDGER
+        // ----------------------------------------------------------------------------
+        function triggerSarajevoEvent() {
+            if (state.activeEvent) return;
+            const ev = SARAJEVO_EVENTS[Math.floor(Math.random() * SARAJEVO_EVENTS.length)];
+            state.activeEvent = ev;
+            state.activeEventCountdown = 18;
+            sfx.bell();
+
+            const banner = document.getElementById('event-banner');
+            document.getElementById('event-icon').textContent = ev.icon;
+            document.getElementById('event-title').textContent = ev.title;
+            document.getElementById('event-desc').textContent = ev.desc;
+            document.getElementById('event-timer').textContent = `${state.activeEventCountdown}s`;
+
+            const actionsEl = document.getElementById('event-actions');
+            actionsEl.innerHTML = '';
+            ev.choices.forEach(choice => {
+                const btn = document.createElement('button');
+                btn.className = 'sarajevo-btn px-2.5 py-1 text-xs bg-[#fbf6ee] hover:bg-[#e6f4f3] text-[#261b15]';
+                btn.textContent = choice.label;
+                btn.disabled = (choice.cash < 0 && Math.abs(choice.cash) > state.cash);
+                btn.onclick = () => resolveSarajevoEvent(choice);
+                actionsEl.appendChild(btn);
+            });
+
+            banner.classList.remove('hidden');
+        }
+
+        function resolveSarajevoEvent(choice) {
+            if (!state.activeEvent) return;
+            if (choice) {
+                state.cash += choice.cash;
+                if (choice.cash > 0) state.dailyStats.bonusRev += choice.cash;
+                state.vibe = Math.max(0, state.vibe + choice.vibe);
+                state.rating = Math.min(10.0, Math.max(7.0, state.rating + choice.rating));
+                if (choice.noise) state.noiseLevel = Math.min(100, Math.max(0, state.noiseLevel + choice.noise));
+                if (choice.cash < 0) sfx.clink(); else sfx.bamCoin();
+                addToast(`${state.activeEvent.icon} ${choice.msg}`, 'good');
+            } else {
+                addToast(`⌛ Missed event: ${state.activeEvent.title}`, 'info');
+            }
+            state.activeEvent = null;
+            document.getElementById('event-banner').classList.add('hidden');
+            updateHUD();
+        }
+
+        function endDayShift() {
+            state.speed = 0;
+            updateSpeedButtons();
+
+            const expenses = 65;
+            state.cash -= expenses;
+            state.dailyStats.expenses = expenses;
+
+            const net = state.dailyStats.roomRev + state.dailyStats.taxRev + state.dailyStats.bonusRev - expenses;
+            const delta = state.rating - state.dailyStats.ratingStart;
+
+            document.getElementById('summary-title').textContent = `Day ${state.day} Shift Ledger`;
+            document.getElementById('sum-room-rev').textContent = `+${state.dailyStats.roomRev.toFixed(2)} BAM`;
+            document.getElementById('sum-tax-rev').textContent = `+${state.dailyStats.taxRev.toFixed(2)} BAM`;
+            document.getElementById('sum-bonus-rev').textContent = `+${state.dailyStats.bonusRev.toFixed(2)} BAM`;
+            document.getElementById('sum-expenses').textContent = `-${expenses.toFixed(2)} BAM`;
+
+            const netEl = document.getElementById('sum-net');
+            netEl.textContent = `${net >= 0 ? '+' : ''}${net.toFixed(2)} BAM`;
+            netEl.className = `font-display text-base ${net >= 0 ? 'text-[#1b5e20]' : 'text-[#991b1b]'}`;
+
+            const sign = delta >= 0 ? '+' : '';
+            document.getElementById('sum-rating').textContent = `🏆 ${state.rating.toFixed(2)} / 10 (${sign}${delta.toFixed(2)})`;
+
+            const greatReviews = [
+                '"Best hostel in the Balkans! Igor welcomed us with rakija on the enclosed balcony overlooking Ćemaluša."',
+                '"Loved The Quince 4-bed dorm—super clean showers, privacy curtains on every bed, and great city maps!"',
+                '"Walking through the sunny balcony to get to The Grape dorm felt like living in a Sarajevo family home."'
+            ];
+            const okReviews = [
+                '"Great location on Ćemaluša pedestrian street, though the shared showers needed a quick scrub during rush hour."',
+                '"Awesome vibe and Bosnian coffee from the kettle, just a little noisy near The Quince after 22:00."'
+            ];
+            document.getElementById('sum-review').textContent = state.rating >= 9.45
+                ? greatReviews[Math.floor(Math.random() * greatReviews.length)]
+                : okReviews[Math.floor(Math.random() * okReviews.length)];
+
+            sfx.bell();
+            document.getElementById('modal-summary').classList.remove('hidden');
+            updateHUD();
+        }
+
+        function startNextDay() {
+            document.getElementById('modal-summary').classList.add('hidden');
+            state.day += 1;
+            state.timeMinutes = 9 * 60; // Opens at 09:00 for check-out window
+            state.noiseLevel = 10;
+            state.speed = 1;
+            updateSpeedButtons();
+
+            state.dailyStats = {
+                roomRev: 0,
+                taxRev: 0,
+                bonusRev: 0,
+                expenses: 65,
+                ratingStart: state.rating
+            };
+
+            // Morning check-outs (until 11:00) & multi-night renewals
+            let checkouts = 0;
+            let renewals = 0;
+            state.rooms.forEach(room => {
+                room.bunks.forEach(bunk => {
+                    if (bunk.guest) {
+                        const g = bunk.guest;
+                        g.nightsLeft -= 1;
+                        if (g.nightsLeft <= 0) {
+                            bunk.guest = null;
+                            bunk.dirty = true;
+                            bunk.curtainFresh = false;
+                            state.checkedIn = state.checkedIn.filter(cg => cg.id !== g.id);
+                            checkouts++;
+                        } else {
+                            renewals++;
+                        }
+                    }
+                });
+            });
+
+            // Staying guests head to the balcony lounge for morning Bosnian coffee & tea
+            state.checkedIn.forEach(g => {
+                const room = state.rooms.find(r => r.id === g.roomId);
+                g.activity = 'balcony';
+                setGuestDestination(g, null, 0.37 + Math.random() * 0.24, 0.56 + Math.random() * 0.18);
+                g.bubble = '🫖';
+            });
+
+            if (checkouts > 0) addToast(`🧳 ${checkouts} morning check-out(s)! Refresh bunks & curtains before 12:00.`, 'warn');
+            if (renewals > 0) addToast(`🏡 ${renewals} traveler(s) staying another night in Sarajevo!`, 'good');
+
+            renderQueueUI();
+            renderPassportUI();
+            updateHUD();
+        }
+
+        // ----------------------------------------------------------------------------
+        // 8. SIMULATION TICK LOOP
+        // ----------------------------------------------------------------------------
+        let lastFrameTime = performance.now();
+
+        function updateSimulation(dt) {
+            if (state.speed === 0) return;
+            const simDt = dt * state.speed;
+
+            // 1. Clock Progression (1 real sec at 1x = 10 in-game mins -> ~87s per shift)
+            const prevHour = Math.floor(state.timeMinutes / 60);
+            state.timeMinutes += simDt * 10;
+            const currHour = Math.floor(state.timeMinutes / 60);
+
+            if (prevHour < 12 && currHour >= 12) {
+                sfx.bell();
+                addToast('🛎️ 12:00 — Regular Check-In window is now OPEN!', 'good');
+            }
+
+            if (prevHour < 22 && currHour >= 22) {
+                addToast('🌙 22:00 — Quiet hours! Guests heading to bunks (The Grape walks via balcony).', 'info');
+                state.checkedIn.forEach(g => {
+                    const room = state.rooms.find(r => r.id === g.roomId);
+                    const bunk = room?.bunks.find(b => b.id === g.bunkId);
+                    if (room && bunk) {
+                        g.activity = 'sleep';
+                        setGuestDestination(g, room, room.rx + room.rw * bunk.ox, room.ry + room.rh * bunk.oy);
+                        g.bubble = '💤';
+                    }
+                });
+            }
+
+            // End shift at 23:30
+            if (state.timeMinutes >= 23 * 60 + 30) {
+                state.timeMinutes = 23 * 60 + 30;
+                updateHUD();
+                endDayShift();
+                return;
+            }
+
+            // 2. Traveler Arrivals at Ćemaluša 7 (Mainly 11:30 - 20:30)
+            state.spawnTimer -= simDt;
+            if (state.spawnTimer <= 0) {
+                const isPeak = currHour >= 12 && currHour <= 19;
+                state.spawnTimer = isPeak ? (6.5 + Math.random() * 4) : (12 + Math.random() * 5);
+                if (state.queue.length < 4 && currHour >= 10 && currHour <= 20) {
+                    const g = createTraveler(false);
+                    state.queue.push(g);
+                    sfx.bell();
+                    if (!state.selectedGuestId) {
+                        state.selectedGuestId = g.id;
+                        renderPassportUI();
+                    }
+                    renderQueueUI();
+                }
+            }
+
+            // 3. ATM Trips & Queue Patience
+            for (let i = state.queue.length - 1; i >= 0; i--) {
+                const g = state.queue[i];
+                if (g.atATM) {
+                    g.atmTimer -= simDt;
+                    if (g.atmTimer <= 0) {
+                        g.atATM = false;
+                        g.hasBAM = true;
+                        g.bubble = '💵';
+                        g.waypoints = [{ x: 0.14, y: 0.86 }, { x: 0.08 + i * 0.06, y: 0.68 }];
+                        sfx.bamCoin();
+                        addToast(`💵 ${g.name} returned from Ćemaluša ATM with BAM cash!`, 'good');
+                        if (state.selectedGuestId === g.id) renderPassportUI();
+                        renderQueueUI();
+                    }
+                } else {
+                    g.patience -= simDt * 1.1;
+                    g.targetX = 0.07 + i * 0.055;
+                    g.targetY = 0.68;
+                    if (g.patience <= 0) {
+                        state.queue.splice(i, 1);
+                        state.rating = Math.max(7.0, state.rating - 0.06);
+                        addToast(`😤 ${g.name} left after waiting too long at reception.`, 'bad');
+                        if (state.selectedGuestId === g.id) {
+                            state.selectedGuestId = state.queue.length > 0 ? state.queue[0].id : null;
+                            renderPassportUI();
+                        }
+                        renderQueueUI();
+                    }
+                }
+            }
+
+            // 4. Electric Kettle Tea & Bosnian Coffee Consumption
+            state.kettleDrinkTimer -= simDt;
+            if (state.kettleDrinkTimer <= 0 && state.checkedIn.length > 0 && currHour < 22) {
+                state.kettleDrinkTimer = 6.5;
+                const loungeGuests = state.checkedIn.filter(g => g.activity === 'balcony');
+                if (loungeGuests.length > 0) {
+                    const g = loungeGuests[Math.floor(Math.random() * loungeGuests.length)];
+                    if (state.kettleStock >= 12) {
+                        state.kettleStock = Math.max(0, state.kettleStock - 12);
+                        const tip = 4;
+                        state.cash += tip;
+                        state.dailyStats.bonusRev += tip;
+                        state.vibe += 3;
+                        sfx.bamCoin();
+                        spawnParticle(g.x, g.y - 0.03, `+${tip} BAM ☕`);
+                    } else {
+                        g.bubble = '🫖?';
+                    }
+                }
+            }
+
+            // 5. Washroom Cleanliness (2 Toilets & 2 Showers) & Late Noise Check
+            const wash = state.rooms.find(r => r.id === 'washrooms');
+            wash.cleanliness = Math.max(0, wash.cleanliness - simDt * (0.4 + state.checkedIn.length * 0.16));
+            if (wash.cleanliness < 35 && Math.random() < simDt * 0.25) {
+                state.rating = Math.max(7.0, state.rating - 0.02);
+            }
+
+            state.noiseLevel = Math.max(0, state.noiseLevel - simDt * 1.4);
+            if (currHour >= 22 && state.noiseLevel > 55 && Math.random() < simDt * 0.25) {
+                state.rating = Math.max(7.0, state.rating - 0.03);
+                addToast('🤫 Balcony chatter is waking The Quince after 22:00!', 'warn');
+            }
+
+            // 6. Sarajevo Random Events
+            if (!state.activeEvent && currHour >= 11 && currHour <= 21) {
+                state.eventTimer -= simDt;
+                if (state.eventTimer <= 0) {
+                    state.eventTimer = 26 + Math.random() * 12;
+                    triggerSarajevoEvent();
+                }
+            } else if (state.activeEvent) {
+                state.activeEventCountdown -= dt;
+                document.getElementById('event-timer').textContent = `${Math.max(0, Math.ceil(state.activeEventCountdown))}s`;
+                if (state.activeEventCountdown <= 0) {
+                    resolveSarajevoEvent(null);
+                }
+            }
+
+            // 7. Waypoint & Smooth Character Movement
+            [...state.queue, ...state.checkedIn].forEach(g => {
+                if (g.waypoints && g.waypoints.length > 0) {
+                    const wp = g.waypoints[0];
+                    const dx = wp.x - g.x;
+                    const dy = wp.y - g.y;
+                    if (Math.hypot(dx, dy) < 0.02) {
+                        g.waypoints.shift();
+                    } else {
+                        g.x += dx * Math.min(1, dt * 4.2);
+                        g.y += dy * Math.min(1, dt * 4.2);
+                    }
+                } else {
+                    const dx = g.targetX - g.x;
+                    const dy = g.targetY - g.y;
+                    g.x += dx * Math.min(1, dt * 3.2);
+                    g.y += dy * Math.min(1, dt * 3.2);
+
+                    // Casual lounge/balcony mingling
+                    if (g.activity === 'balcony' && Math.random() < simDt * 0.25) {
+                        g.targetX = 0.35 + Math.random() * 0.28;
+                        g.targetY = 0.54 + Math.random() * 0.22;
+                    }
+                }
+            });
+
+            // 8. Floating Particles
+            for (let i = state.particles.length - 1; i >= 0; i--) {
+                const p = state.particles[i];
+                p.y += p.vy * dt;
+                p.alpha -= dt * 0.7;
+                if (p.alpha <= 0) state.particles.splice(i, 1);
+            }
+
+            updateHUD();
+        }
+
+        // ----------------------------------------------------------------------------
+        // 9. STYLIZED ĆEMALUŠA 7 CUTAWAY CANVAS RENDERER
+        // ----------------------------------------------------------------------------
+        function resizeCanvas() {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        function roundRect(x, y, w, h, r) {
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.lineTo(x + w - r, y);
+            ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+            ctx.lineTo(x + w, y + h - r);
+            ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+            ctx.lineTo(x + r, y + h);
+            ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+            ctx.lineTo(x, y + r);
+            ctx.quadraticCurveTo(x, y, x + r, y);
+            ctx.closePath();
+        }
+
+        function drawHostelCutaway() {
+            const W = canvas.width / (window.devicePixelRatio || 1);
+            const H = canvas.height / (window.devicePixelRatio || 1);
+
+            // Warm Austro-Hungarian Walnut Hallway Floor
+            ctx.fillStyle = '#533d2e';
+            ctx.fillRect(0, 0, W, H);
+
+            // Subtle parquet floor lines
+            ctx.strokeStyle = 'rgba(26, 17, 11, 0.25)';
+            ctx.lineWidth = 1;
+            for (let y = 0; y < H; y += 20) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(W, y);
+                ctx.stroke();
+            }
+
+            // Render Each Zone
+            state.rooms.forEach(room => {
+                const x = room.rx * W;
+                const y = room.ry * H;
+                const w = room.rw * W;
+                const h = room.rh * H;
+
+                roundRect(x, y, w, h, 12);
+                ctx.fillStyle = room.color;
+                ctx.fill();
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = '#261b15';
+                ctx.stroke();
+
+                // Street Strip Special Rendering
+                if (room.type === 'street') {
+                    // Cobblestone / Pedestrian tiles
+                    ctx.fillStyle = 'rgba(255,255,255,0.08)';
+                    for (let sx = x + 12; sx < x + w - 20; sx += 34) {
+                        ctx.fillRect(sx, y + 8, 22, h - 16);
+                    }
+                    ctx.font = 'bold 11px Plus Jakarta Sans, sans-serif';
+                    ctx.fillStyle = '#fbf6ee';
+                    ctx.textAlign = 'left';
+                    ctx.fillText('🚶 Ćemaluša Pedestrian Street • Baščaršija →', x + 14, y + h * 0.56);
+
+                    // ATM / Exchange Booth sign on street
+                    roundRect(x + w * 0.42, y + 6, w * 0.22, h - 12, 8);
+                    ctx.fillStyle = '#e89f3c';
+                    ctx.fill();
+                    ctx.strokeStyle = '#261b15';
+                    ctx.stroke();
+                    ctx.fillStyle = '#261b15';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('🏧 BAM Exchange / ATM', x + w * 0.53, y + h * 0.56);
+                    return;
+                }
+
+                // Room Header Tag
+                ctx.font = 'bold 10px Plus Jakarta Sans, sans-serif';
+                const tagW = Math.min(w - 12, ctx.measureText(room.shortName).width + 18);
+                roundRect(x + 8, y + 7, Math.max(82, tagW), 20, 7);
+                ctx.fillStyle = room.accent;
+                ctx.fill();
+                ctx.lineWidth = 1.8;
+                ctx.strokeStyle = '#261b15';
+                ctx.stroke();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.textAlign = 'left';
+                ctx.fillText(room.shortName, x + 15, y + 20);
+
+                // Reception Details
+                if (room.type === 'reception') {
+                    roundRect(x + w * 0.10, y + h * 0.24, w * 0.80, h * 0.17, 8);
+                    ctx.fillStyle = '#c89d6c';
+                    ctx.fill();
+                    ctx.strokeStyle = '#261b15';
+                    ctx.stroke();
+
+                    ctx.font = '13px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('🛎️ 💵 🗺️ 🧳', x + w * 0.50, y + h * 0.35);
+
+                    ctx.font = 'bold 9px Plus Jakarta Sans';
+                    ctx.fillStyle = '#5a4538';
+                    ctx.fillText('Cash Only (BAM) • Luggage Drop', x + w * 0.50, y + h - 8);
+                }
+
+                // 2 Toilets & 2 Showers Details
+                if (room.type === 'washrooms') {
+                    const cleanPct = Math.round(room.cleanliness);
+                    ctx.font = '16px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('🚿 🚿', x + w * 0.50, y + h * 0.36);
+                    ctx.fillText('🚽 🚽', x + w * 0.50, y + h * 0.54);
+
+                    const barW = w * 0.78;
+                    const barX = x + (w - barW) / 2;
+                    const barY = y + h * 0.68;
+                    roundRect(barX, barY, barW, 12, 6);
+                    ctx.fillStyle = '#cbd5e1';
+                    ctx.fill();
+                    ctx.stroke();
+
+                    roundRect(barX, barY, barW * (cleanPct / 100), 12, 6);
+                    ctx.fillStyle = cleanPct > 60 ? '#22c55e' : (cleanPct > 30 ? '#f59e0b' : '#ef4444');
+                    ctx.fill();
+
+                    ctx.fillStyle = '#261b15';
+                    ctx.font = 'bold 9px Plus Jakarta Sans';
+                    ctx.fillText(cleanPct < 80 ? `🧹 Scrub (${cleanPct}%)` : `✨ Spotless (${cleanPct}%)`, x + w * 0.5, barY + 24);
+                }
+
+                // Enclosed Balcony & Lounge Details
+                if (room.type === 'balcony') {
+                    // Enclosed Balcony Glass Window Strip overlooking Ćemaluša
+                    roundRect(x + 10, y + h - 26, w - 20, 18, 6);
+                    ctx.fillStyle = '#bae6fd';
+                    ctx.fill();
+                    ctx.strokeStyle = '#261b15';
+                    ctx.stroke();
+                    ctx.fillStyle = '#0369a1';
+                    ctx.font = 'bold 9px Plus Jakarta Sans';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('🪟 Enclosed Balcony Overlooking Ćemaluša', x + w * 0.5, y + h - 14);
+
+                    // Electric Kettle & Rakija Table
+                    roundRect(x + w * 0.14, y + h * 0.22, w * 0.72, h * 0.18, 8);
+                    ctx.fillStyle = '#c89d6c';
+                    ctx.fill();
+                    ctx.strokeStyle = '#261b15';
+                    ctx.stroke();
+
+                    ctx.font = '13px sans-serif';
+                    ctx.fillText(state.kettleStock > 15 ? '🫖 ☕ 🥂 🎲' : '⚠️ Refill Kettle 🥂', x + w * 0.5, y + h * 0.34);
+
+                    // Doorway arrow indicator into The Grape
+                    ctx.fillStyle = '#7e3af2';
+                    ctx.font = 'bold 9px Plus Jakarta Sans';
+                    ctx.textAlign = 'right';
+                    ctx.fillText('To The Grape →', x + w - 8, y + h * 0.56);
+                }
+
+                // Render Dorm Bunks (with Privacy Curtains, Lamps & Outlets)
+                room.bunks.forEach(bunk => {
+                    const bx = x + w * bunk.ox;
+                    const by = y + h * bunk.oy;
+                    const bw = room.type === 'quince' ? w * 0.36 : w * 0.24;
+                    const bh = h * 0.27;
+
+                    roundRect(bx - bw / 2, by - bh / 2, bw, bh, 7);
+                    ctx.fillStyle = bunk.dirty ? '#fed7aa' : (bunk.guest ? '#dbeafe' : '#ffffff');
+                    ctx.fill();
+                    ctx.lineWidth = 2;
+                    ctx.strokeStyle = bunk.dirty ? '#c85a32' : '#261b15';
+                    ctx.stroke();
+
+                    // Privacy Curtain Trim along bunk edge
+                    ctx.fillStyle = bunk.curtainFresh ? '#2e6f65' : '#9ca3af';
+                    ctx.fillRect(bx - bw / 2 + 2, by - bh / 2 + 2, 5, bh - 4);
+
+                    ctx.font = 'bold 9px Plus Jakarta Sans';
+                    ctx.textAlign = 'center';
+                    if (bunk.dirty) {
+                        ctx.fillStyle = '#9a3412';
+                        ctx.fillText('🧹 Tidy', bx + 3, by + 3);
+                    } else if (!bunk.guest) {
+                        ctx.fillStyle = '#64748b';
+                        ctx.fillText(`${bunk.label} 💡`, bx + 3, by + 3);
+                    }
+                });
+            });
+
+            // Render Travelers
+            const everyone = [...state.queue, ...state.checkedIn];
+            everyone.forEach(g => {
+                const gx = g.x * W;
+                const gy = g.y * H;
+                const isSel = g.id === state.selectedGuestId;
+
+                if (isSel) {
+                    ctx.beginPath();
+                    ctx.arc(gx, gy, 19, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(200, 90, 50, 0.35)';
+                    ctx.fill();
+                    ctx.lineWidth = 2;
+                    ctx.strokeStyle = '#c85a32';
+                    ctx.stroke();
+                }
+
+                ctx.beginPath();
+                ctx.arc(gx, gy, 12, 0, Math.PI * 2);
+                ctx.fillStyle = g.shirtColor;
+                ctx.fill();
+                ctx.lineWidth = 2.2;
+                ctx.strokeStyle = '#261b15';
+                ctx.stroke();
+
+                ctx.font = '13px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(g.avatar, gx, gy + 1);
+
+                if (g.bubble) {
+                    roundRect(gx + 6, gy - 22, 22, 15, 5);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fill();
+                    ctx.lineWidth = 1.4;
+                    ctx.strokeStyle = '#261b15';
+                    ctx.stroke();
+                    ctx.font = '9px sans-serif';
+                    ctx.fillText(g.bubble, gx + 17, gy - 14);
+                }
+            });
+
+            // Floating Particles
+            state.particles.forEach(p => {
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, p.alpha);
+                ctx.font = 'bold 12px Plus Jakarta Sans, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillStyle = '#ffffff';
+                ctx.strokeStyle = '#261b15';
+                ctx.lineWidth = 3;
+                ctx.strokeText(p.text, p.x * W, p.y * H);
+                ctx.fillText(p.text, p.x * W, p.y * H);
+                ctx.restore();
+            });
+
+            // Day/Night Ambient Overlay
+            const phase = getShiftPhase(state.timeMinutes);
+            if (phase.tint !== 'rgba(255, 255, 255, 0)') {
+                ctx.fillStyle = phase.tint;
+                ctx.fillRect(0, 0, W, H);
+            }
+        }
+
+        // ----------------------------------------------------------------------------
+        // 10. CANVAS INTERACTIONS & UI BUTTONS
+        // ----------------------------------------------------------------------------
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const nx = (e.clientX - rect.left) / rect.width;
+            const ny = (e.clientY - rect.top) / rect.height;
+
+            // 1. Click waiting guest in Reception queue
+            for (const g of state.queue) {
+                if (Math.hypot(nx - g.x, ny - g.y) < 0.045) {
+                    selectGuest(g.id);
+                    return;
+                }
+            }
+
+            // 2. Click dirty bunk to clean & refresh privacy curtain
+            for (const room of state.rooms) {
+                for (const bunk of room.bunks) {
+                    const bx = room.rx + room.rw * bunk.ox;
+                    const by = room.ry + room.rh * bunk.oy;
+                    if (Math.abs(nx - bx) < 0.055 && Math.abs(ny - by) < 0.055 && (bunk.dirty || !bunk.curtainFresh)) {
+                        cleanBunk(room, bunk);
+                        return;
+                    }
+                }
+            }
+
+            // 3. Click 2 Toilets & 2 Showers to scrub
+            const wash = state.rooms.find(r => r.id === 'washrooms');
+            if (nx >= wash.rx && nx <= wash.rx + wash.rw && ny >= wash.ry && ny <= wash.ry + wash.rh) {
+                if (wash.cleanliness < 98) scrubWashrooms();
+                else addToast('🚿 All 2 toilets & 2 showers are already sparkling!', 'info');
+                return;
+            }
+
+            // 4. Click Electric Kettle station in Balcony Lounge
+            const balc = state.rooms.find(r => r.id === 'balcony');
+            if (nx >= balc.rx && nx <= balc.rx + balc.rw && ny >= balc.ry && ny <= balc.ry + balc.rh * 0.45) {
+                if (state.kettleStock < 95) brewKettle();
+                else addToast('🫖 Electric kettle is hot with Bosnian coffee & mountain tea!', 'info');
+            }
+        });
+
+        function updateSpeedButtons() {
+            const map = { 0: 'btn-pause', 1: 'btn-1x', 2: 'btn-2x' };
+            ['btn-pause', 'btn-1x', 'btn-2x'].forEach(id => {
+                const el = document.getElementById(id);
+                el.classList.remove('bg-[#2e6f65]', 'text-white');
+                el.classList.add('bg-[#f1e6d6]');
+            });
+            const active = document.getElementById(map[state.speed]);
+            active.classList.remove('bg-[#f1e6d6]');
+            active.classList.add('bg-[#2e6f65]', 'text-white');
+        }
+
+        document.getElementById('btn-pause').onclick = () => { state.speed = 0; updateSpeedButtons(); };
+        document.getElementById('btn-1x').onclick = () => { state.speed = 1; updateSpeedButtons(); };
+        document.getElementById('btn-2x').onclick = () => { state.speed = 2; updateSpeedButtons(); };
+
+        document.getElementById('btn-mute').onclick = (e) => {
+            sfx.muted = !sfx.muted;
+            e.target.textContent = sfx.muted ? '🔇' : '🔊';
+        };
+
+        document.getElementById('btn-help').onclick = () => {
+            state.speed = 0;
+            updateSpeedButtons();
+            document.getElementById('modal-help').classList.remove('hidden');
+        };
+
+        document.getElementById('btn-start-game').onclick = () => {
+            sfx.init();
+            sfx.bell();
+            document.getElementById('modal-help').classList.add('hidden');
+            state.speed = 1;
+            updateSpeedButtons();
+        };
+
+        document.getElementById('btn-send-atm').onclick = () => {
+            if (state.selectedGuestId) sendGuestToATM(state.selectedGuestId);
+        };
+        document.getElementById('btn-turn-away').onclick = () => {
+            if (state.selectedGuestId) turnAwayGuest(state.selectedGuestId);
+        };
+
+        document.getElementById('btn-brew-kettle').onclick = brewKettle;
+        document.getElementById('btn-pour-rakija').onclick = pourWelcomeRakija;
+        document.getElementById('btn-city-map').onclick = handOutCityMaps;
+        document.getElementById('btn-clean-all').onclick = scrubAllAndCurtains;
+        document.getElementById('btn-next-day').onclick = startNextDay;
+
+        // Main Loop
+        function gameLoop(now) {
+            const dt = Math.min(0.1, (now - lastFrameTime) / 1000);
+            lastFrameTime = now;
+            updateSimulation(dt);
+            drawHostelCutaway();
+            requestAnimationFrame(gameLoop);
+        }
+
+        window.onload = function () {
+            resizeCanvas();
+
+            // Pre-populate 3 overnight guests checking out this morning (until 11:00)
+            const initialPlacements = [
+                { roomId: 'quince', bunkId: 'q1' },
+                { roomId: 'apricot', bunkId: 'a2' },
+                { roomId: 'grape', bunkId: 'g1' }
+            ];
+            initialPlacements.forEach(p => {
+                const g = createTraveler(true);
+                g.nightsLeft = 1; // Will check out next morning
+                const room = state.rooms.find(r => r.id === p.roomId);
+                const bunk = room.bunks.find(b => b.id === p.bunkId);
+                bunk.guest = g;
+                g.roomId = room.id;
+                g.bunkId = bunk.id;
+                g.activity = 'balcony';
+                g.x = 0.42 + Math.random() * 0.18;
+                g.y = 0.60 + Math.random() * 0.14;
+                g.targetX = g.x;
+                g.targetY = g.y;
+                g.bubble = '🫖';
+                state.checkedIn.push(g);
+            });
+
+            // 2 travelers arriving at Ćemaluša 7 reception
+            const q1 = createTraveler(false);
+            q1.hasBAM = true;
+            q1.bubble = '🛎️';
+            const q2 = createTraveler(false);
+            q2.hasBAM = false;
+            q2.bubble = '💶?';
+            state.queue.push(q1, q2);
+            state.selectedGuestId = q1.id;
+
+            state.speed = 0;
+            updateSpeedButtons();
+            renderQueueUI();
+            renderPassportUI();
+            updateHUD();
+
+            requestAnimationFrame(gameLoop);
+        };
+    </script>
+</body>
+</html>
